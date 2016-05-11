@@ -52,6 +52,33 @@ class Request(Owned):
         if get_current_user().has_perm(perm, self):
             yield (reverse(self.view, kwargs={'pk': self.pk}), 'Accept')
 
+    def revert(self):
+        """
+        This function is used to restore the state of the record data
+        from the *Request.
+
+        Example::
+            record = Record.objects.get(pk=1)
+            record.name = 'test'
+            record.save()
+            record_request = RecordRequest.objects.get(record=record)
+            record_request.revert()
+            record.refresh_from_db()
+            print(record.name) # Record name from record_request (target_name)
+        """
+        object_ = self.get_object()
+        for field_name in type(self).copy_fields:
+            if field_name in self.ignore_fields:
+                continue
+            setattr(
+                object_,
+                field_name[len(self.prefix):],
+                getattr(self, field_name)
+            )
+        object_.save()
+        self.record = object_
+        self.save()
+
     def save(self, *args, **kwargs):
         if self.owner is None:
             self.owner = get_current_user()
@@ -248,6 +275,7 @@ class RecordRequest(ChangeCreateRequest, RecordLike):
         help_text=_(
             'The record for which a change is being requested'
         ),
+        on_delete=models.SET_NULL
     )
     target_name = models.CharField(
         _("name"), max_length=255, blank=False, null=False,

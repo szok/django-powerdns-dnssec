@@ -1,14 +1,13 @@
-import unittest
-
 from threadlocals.threadlocals import set_current_user
 from django.contrib.auth.models import User
+from django.test import TestCase
 
 from powerdns.models.powerdns import Domain, Record
 from powerdns.models.requests import DomainRequest, RecordRequest
 from powerdns.tests.utils import assert_does_exist, assert_not_exists
 
 
-class TestRequests(unittest.TestCase):
+class TestRequests(TestCase):
     """Tests for domain/record requests"""
 
     def setUp(self):
@@ -91,3 +90,53 @@ class TestRequests(unittest.TestCase):
         request.accept()
         assert_does_exist(Record, content='djangobb.example.com')
         assert_not_exists(Record, content='phpbb.example.com')
+
+    def test_request_revert_after_delete(self):
+        request = RecordRequest.objects.create(
+            domain=self.domain,
+            record=self.record,
+            target_type='CNAME',
+            target_name='forum.example.com',
+            target_content='djangobb.example.com',
+        )
+        self.record.delete()
+        request.revert()
+        self.assertTrue(
+            Record.objects.filter(
+                domain=self.domain,
+                content=request.target_content,
+                type=request.target_type,
+                name=request.target_name
+            ).exists()
+        )
+
+    def test_request_revert_after_changes(self):
+        request_1 = RecordRequest.objects.create(
+            domain=self.domain,
+            record=self.record,
+            target_type='CNAME',
+            target_name='forum.example.com',
+            target_content='django.example.com',
+        )
+        request_1.accept()
+        request_2 = RecordRequest.objects.create(
+            domain=self.domain,
+            record=self.record,
+            target_type='TXT',
+            target_name=self.domain.name,
+            target_content='txt tests',
+        )
+        request_2.accept()
+        self.record.refresh_from_db()
+        self.assertEqual(self.record.content, 'txt tests')
+        self.assertEqual(self.record.type, 'TXT')
+
+        request_1.revert()
+        self.record.refresh_from_db()
+        self.assertEqual(self.record.content, 'django.example.com')
+        self.assertEqual(self.record.type, 'CNAME')
+
+        request_2.revert()
+        self.record.refresh_from_db()
+        self.assertEqual(self.record.content, 'txt tests')
+        self.assertEqual(self.record.type, 'TXT')
