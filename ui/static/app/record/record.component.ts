@@ -32,9 +32,10 @@ export class RecordComponent implements OnInit {
   showAllRecords: boolean = false;
   activeUser: string;
   searchValue: string;
+  timer: any;
   additionalRouteParams: {[key: string]: string} = {
     "showAll": "false",
-    "search": this.searchValue
+    "search": null
   };
 
   constructor(
@@ -48,10 +49,14 @@ export class RecordComponent implements OnInit {
     this.activeUser = this.authService.getUsername();
     this.showAllRecords = this.routeParams.get("showAll") === "true" ? true : false;
     this.additionalRouteParams["showAll"] = this.routeParams.get("showAll");
+    let url_offset: string = this.routeParams.get("offset");
+    this.currentOffset = url_offset ? Number(url_offset) : 0;
+    this.searchValue = this.routeParams.get("search");
     this.getRecords();
   }
 
-  onKeyUp(event: KeyboardEvent, value: string) {
+  search(value: string) {
+    this.currentOffset = 0;
     if (value.length > 1) {
       this.searchValue = value;
       this.getRecords();
@@ -61,15 +66,24 @@ export class RecordComponent implements OnInit {
     }
   }
 
+  onKeyUpSearch(event: KeyboardEvent, value: string) {
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+    this.timer = setTimeout(() => this.search(value), 300);
+  }
+
   getRecords() {
     let params: URLSearchParams = new URLSearchParams();
-    this.currentOffset = Number(this.routeParams.get("offset"));
     params.set("limit", String(this.perPage));
     params.set("offset",  String(this.currentOffset));
 
     if (!this.showAllRecords) {
       params.set("owner", String(this.authService.getUserId()));
     }
+
+    this.additionalRouteParams["search"] = this.searchValue;
+
     if (this.searchValue) {
       params.set("search", this.searchValue);
     }

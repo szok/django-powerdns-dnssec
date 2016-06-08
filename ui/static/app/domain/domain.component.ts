@@ -23,8 +23,9 @@ export class DomainComponent implements OnInit {
   totalCount: number;
   searchValue: string;
   additionalRouteParams: {[key: string]: string} = {
-    "search": this.searchValue
+    "search": null
   };
+  timer: any;
 
   constructor(
     private domainService: DomainService,
@@ -33,14 +34,17 @@ export class DomainComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    let url_offset: string = this.routeParams.get("offset");
+    this.currentOffset = url_offset ? Number(url_offset) : 0;
+    this.searchValue = this.routeParams.get("search");
     this.getDomains();
   }
 
   getDomains() {
     let params: URLSearchParams = new URLSearchParams();
-    this.currentOffset = Number(this.routeParams.get("offset"));
     params.set("limit", String(this.perPage));
     params.set("offset",  String(this.currentOffset));
+    this.additionalRouteParams["search"] = this.searchValue;
 
     if (this.searchValue) {
       params.set("search", this.searchValue);
@@ -57,7 +61,8 @@ export class DomainComponent implements OnInit {
     );
   }
 
-  onKeyUp(event: KeyboardEvent, value: string) {
+  search(value: string) {
+    this.currentOffset = 0;
     if (value.length > 1) {
       this.searchValue = value;
       this.getDomains();
@@ -65,5 +70,12 @@ export class DomainComponent implements OnInit {
       this.searchValue = null;
       this.getDomains();
     }
+  }
+
+  onKeyUpSearch(event: KeyboardEvent, value: string) {
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+    this.timer = setTimeout(() => this.search(value), 300);
   }
 }
