@@ -4,6 +4,7 @@ import { URLSearchParams } from "@angular/http";
 import { DomainService } from "./domain.service";
 import { Domain } from "./domain";
 import { isLoggedin }  from "../auth/auth.service";
+import { SearchComponent } from "../search.component";
 import { PaginationComponent } from "../pagination/pagination.component";
 import "rxjs/add/observable/throw";
 
@@ -14,7 +15,7 @@ import "rxjs/add/observable/throw";
   directives: [PaginationComponent]
 })
 @CanActivate(() => isLoggedin())
-export class DomainComponent implements OnInit {
+export class DomainComponent  extends SearchComponent implements OnInit {
 
   domains: Domain[];
   errorMessage: string;
@@ -25,13 +26,14 @@ export class DomainComponent implements OnInit {
   additionalRouteParams: {[key: string]: string} = {
     "search": null
   };
-  timer: any;
 
   constructor(
     private domainService: DomainService,
     private router: Router,
     private routeParams: RouteParams
-  ) { }
+  ) {
+    super();
+  }
 
   ngOnInit() {
     let url_offset: string = this.routeParams.get("offset");
@@ -70,12 +72,5 @@ export class DomainComponent implements OnInit {
       this.searchValue = null;
       this.getDomains();
     }
-  }
-
-  onKeyUpSearch(event: KeyboardEvent, value: string) {
-    if (this.timer) {
-      clearTimeout(this.timer);
-    }
-    this.timer = setTimeout(() => this.search(value), 300);
   }
 }

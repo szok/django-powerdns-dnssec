@@ -5,6 +5,7 @@ import { AuthService, isLoggedin }  from "../auth/auth.service";
 import { Record } from "./record";
 import { RecordService } from "./record.service";
 import { PaginationComponent } from "../pagination/pagination.component";
+import { SearchComponent } from "../search.component";
 import "rxjs/add/observable/throw";
 
 
@@ -22,7 +23,7 @@ import "rxjs/add/observable/throw";
   `]
 })
 @CanActivate(() => isLoggedin())
-export class RecordComponent implements OnInit {
+export class RecordComponent extends SearchComponent implements OnInit {
 
   records: Record[];
   errorMessage: any;
@@ -32,7 +33,6 @@ export class RecordComponent implements OnInit {
   showAllRecords: boolean = false;
   activeUser: string;
   searchValue: string;
-  timer: any;
   additionalRouteParams: {[key: string]: string} = {
     "showAll": "false",
     "search": null
@@ -43,7 +43,9 @@ export class RecordComponent implements OnInit {
     private routeParams: RouteParams,
     private recordService: RecordService,
     private authService: AuthService
-  ) { }
+  ) {
+    super();
+  }
 
   ngOnInit() {
     this.activeUser = this.authService.getUsername();
@@ -64,13 +66,6 @@ export class RecordComponent implements OnInit {
       this.searchValue = null;
       this.getRecords();
     }
-  }
-
-  onKeyUpSearch(event: KeyboardEvent, value: string) {
-    if (this.timer) {
-      clearTimeout(this.timer);
-    }
-    this.timer = setTimeout(() => this.search(value), 300);
   }
 
   getRecords() {
