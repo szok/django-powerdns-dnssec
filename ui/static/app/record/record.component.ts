@@ -28,7 +28,7 @@ export class RecordComponent extends SearchComponent implements OnInit {
   records: Record[];
   errorMessage: any;
   currentOffset: number = 0;
-  perPage: number = 20;
+  perPage: number = 100;
   totalCount: number;
   showAllRecords: boolean = false;
   activeUser: string;

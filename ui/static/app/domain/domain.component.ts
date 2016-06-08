@@ -20,7 +20,7 @@ export class DomainComponent  extends SearchComponent implements OnInit {
   domains: Domain[];
   errorMessage: string;
   currentOffset: number = 0;
-  perPage: number = 20;
+  perPage: number = 100;
   totalCount: number;
   searchValue: string;
   additionalRouteParams: {[key: string]: string} = {
