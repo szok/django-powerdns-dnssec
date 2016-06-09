@@ -56,13 +56,13 @@ export class PaginationComponent {
     let paginationLimit: number = 5;
 
     if (totalPage > paginationLimit) {
-      let currentPage: number = 1
+      let currentPage: number = 1;
       if (this.currentOffset !== 0) {
-        currentPage = Math.ceil(this.currentOffset / this.perPage + 1)
+        currentPage = Math.ceil(this.currentOffset / this.perPage + 1);
       }
       startPage = currentPage - Math.floor(paginationLimit / 2);
       if (startPage < 1) {
-        startPage = 1
+        startPage = 1;
       }
       let endPage: number = startPage + paginationLimit - 1 ;
       if (endPage < totalPage) {

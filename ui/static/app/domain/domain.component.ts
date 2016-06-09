@@ -15,7 +15,7 @@ import "rxjs/add/observable/throw";
   directives: [PaginationComponent]
 })
 @CanActivate(() => isLoggedin())
-export class DomainComponent  extends SearchComponent implements OnInit {
+export class DomainComponent extends SearchComponent implements OnInit {
 
   domains: Domain[];
   errorMessage: string;
@@ -45,7 +45,7 @@ export class DomainComponent  extends SearchComponent implements OnInit {
   getDomains() {
     let params: URLSearchParams = new URLSearchParams();
     params.set("limit", String(this.perPage));
-    params.set("offset",  String(this.currentOffset));
+    params.set("offset", String(this.currentOffset));
     this.additionalRouteParams["search"] = this.searchValue;
 
     if (this.searchValue) {
