@@ -23,7 +23,7 @@
 
     // Add map entries for each angular package
     PackageNames.forEach(function (pkgName) {
-        map['@angular/' + pkgName] = '/static/lib/@angular/' + pkgName;
+        map['@angular/' + pkgName] = '/static/lib/@angular/' + pkgName + '/bundles';
     });
 
     // Add package entries for angular packages
