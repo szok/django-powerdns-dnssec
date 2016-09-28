@@ -1,0 +1,3 @@
+-r base.txt
+hg+https://hg@bitbucket.org/szok/django-auth-ldap
+raven==5.20.0

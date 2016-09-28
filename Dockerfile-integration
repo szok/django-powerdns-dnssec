@@ -1,5 +1,6 @@
 FROM zefciu/python-base
 MAINTAINER Pylabs <pylabs@allegro.pl>
+RUN apt-get update && apt-get install -y libsasl2-dev python3.4-dev libldap2-dev libssl-dev
 RUN pip install nose py3dns requests flake8
 RUN mkdir dnsaas-source
 ADD setup.py dnsaas-source/setup.py
@@ -10,6 +11,6 @@ ADD powerdns dnsaas-source/powerdns
 ADD dnsaas dnsaas-source/dnsaas
 ADD ui dnsaas-source/ui
 ADD manage.py dnsaas-source/manage.py
-RUN cd dnsaas-source && python3.4 setup.py install 
+RUN cd dnsaas-source && python3.4 setup.py install
 ADD integration-tests integration-tests
 CMD /bin/sh integration-tests/runtests.sh

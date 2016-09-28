@@ -1,5 +1,6 @@
 FROM zefciu/dnsaas-base
 MAINTAINER Pylabs <pylabs@allegro.pl>
+RUN apt-get update && apt-get install -y libsasl2-dev python3.4-dev libldap2-dev libssl-dev
 RUN mkdir dnsaas
 ADD dnsaas dnsaas/dnsaas
 ADD powerdns dnsaas/powerdns

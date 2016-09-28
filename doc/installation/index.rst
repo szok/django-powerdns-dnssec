@@ -8,3 +8,4 @@ Installation
     as_microservice
     as_django_app
     common_configuration
+    ldap

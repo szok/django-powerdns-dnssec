@@ -2,7 +2,6 @@
 import os
 import sys
 
-
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -150,7 +149,7 @@ INSTALLED_APPS = (
     'autocomplete_light',
     'django.contrib.admin',
     'django.contrib.admindocs',
-    'rules',
+    'rules'
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -231,6 +230,8 @@ NEW_FEATURE_URL = ''
 SENTRY_JS_DSN = ''
 SENTRY_JS_CONFIG = {}
 JIRA_URL = ''
+
+USE_CACHE = False
 
 NEW_UI_ENABLED = False
 
